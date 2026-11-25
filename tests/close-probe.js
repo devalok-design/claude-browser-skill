@@ -3,13 +3,17 @@
 // Usage: node close-probe.js <tabs-close|page-close|window-close>
 'use strict';
 const { start } = require('./mcp.js');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs'), os = require('os'), path = require('path');
 const method = process.argv[2];
 // The Chrome profile playwright-auth attaches to, taken from the user's own config (--user-data-dir).
 const args = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8')).mcpServers['playwright-auth'].args;
-const PROFILE = path.basename(args[args.indexOf('--user-data-dir') + 1]).replace(/'/g, '');
-const countWindows = () => +execSync(`powershell -NoProfile -c "Add-Type -AssemblyName UIAutomationClient,UIAutomationTypes; $A=[Windows.Automation.AutomationElement]; $p=(Get-CimInstance Win32_Process -Filter \\"name='chrome.exe'\\" | ? { $_.CommandLine -match '${PROFILE}' -and $_.CommandLine -notmatch '--type=' }).ProcessId; ($A::RootElement.FindAll([Windows.Automation.TreeScope]::Children,(New-Object Windows.Automation.PropertyCondition($A::ProcessIdProperty,[int]$p))) | ? { $_.Current.Name -like 'Example Domain*' }).Count"`).toString().trim();
+const PROFILE = path.basename(args[args.indexOf('--user-data-dir') + 1]);
+// No shell string: the profile name travels as an env var and PowerShell escapes it itself.
+const COUNT_PS = "Add-Type -AssemblyName UIAutomationClient,UIAutomationTypes; $A=[Windows.Automation.AutomationElement]; " +
+  "$p=(Get-CimInstance Win32_Process -Filter \"name='chrome.exe'\" | ? { $_.CommandLine -match [regex]::Escape($env:PW_PROFILE) -and $_.CommandLine -notmatch '--type=' }).ProcessId; " +
+  "($A::RootElement.FindAll([Windows.Automation.TreeScope]::Children,(New-Object Windows.Automation.PropertyCondition($A::ProcessIdProperty,[int]$p))) | ? { $_.Current.Name -like 'Example Domain*' }).Count";
+const countWindows = () => +execFileSync('powershell', ['-NoProfile', '-Command', COUNT_PS], { env: { ...process.env, PW_PROFILE: PROFILE } }).toString().trim();
 (async () => {
   const c = start('playwright-auth', 'probe');
   await c.init(60000);
