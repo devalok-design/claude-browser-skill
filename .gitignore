@@ -1,0 +1,4 @@
+# Machine-specific notes for the skill: paths, profile, personal rules. Never published.
+skills/browser/references/local.md
+node_modules/
+*.log
