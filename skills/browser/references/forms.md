@@ -142,6 +142,15 @@ around the classifier: never.**
 - **Two dialogs match** → `page.getByRole('dialog', { name: 'Add member' })`.
 - **`browser_handle_dialog` only handles native `alert/confirm/prompt`.** An in-page `[role=dialog]` is
   ordinary DOM: `The tool "browser_handle_dialog" can only be used when there is related modal state present.`
+- **Native `alert/confirm/prompt` on `playwright-auth`** (verified Nov 2026): `page.once('dialog', …)` inside
+  `browser_run_code_unsafe` hangs, and a click that opens a dialog blocks the call that made it. Open the
+  dialog from a timer so the call returns first, then answer it:
+  ```js
+  // browser_evaluate
+  () => { setTimeout(() => document.querySelector('button[onclick="jsPrompt()"]').click(), 0); return 'scheduled'; }
+  ```
+  then `browser_handle_dialog({ accept: true, promptText: 'S1 was here' })` (or `accept: false` to cancel), and
+  read the page's result element afterwards.
 - **Something covers the target**: dismiss known interstitials first (Google Cloud billing "Do this later",
   a portal's "update your settings" and "skip for now" prompts). A sticky header was neutralised with
   `page.addStyleTag({ content: '.site-header { pointer-events:none !important }' })`.
