@@ -4,8 +4,12 @@
 'use strict';
 const { start } = require('./mcp.js');
 const { execSync } = require('child_process');
+const fs = require('fs'), os = require('os'), path = require('path');
 const method = process.argv[2];
-const countWindows = () => +execSync(`powershell -NoProfile -c "Add-Type -AssemblyName UIAutomationClient,UIAutomationTypes; $A=[Windows.Automation.AutomationElement]; $p=(Get-CimInstance Win32_Process -Filter \\"name='chrome.exe'\\" | ? { $_.CommandLine -match 'claude-browser' -and $_.CommandLine -notmatch '--type=' }).ProcessId; ($A::RootElement.FindAll([Windows.Automation.TreeScope]::Children,(New-Object Windows.Automation.PropertyCondition($A::ProcessIdProperty,[int]$p))) | ? { $_.Current.Name -like 'Example Domain*' }).Count"`).toString().trim();
+// The Chrome profile playwright-auth attaches to, taken from the user's own config (--user-data-dir).
+const args = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8')).mcpServers['playwright-auth'].args;
+const PROFILE = path.basename(args[args.indexOf('--user-data-dir') + 1]).replace(/'/g, '');
+const countWindows = () => +execSync(`powershell -NoProfile -c "Add-Type -AssemblyName UIAutomationClient,UIAutomationTypes; $A=[Windows.Automation.AutomationElement]; $p=(Get-CimInstance Win32_Process -Filter \\"name='chrome.exe'\\" | ? { $_.CommandLine -match '${PROFILE}' -and $_.CommandLine -notmatch '--type=' }).ProcessId; ($A::RootElement.FindAll([Windows.Automation.TreeScope]::Children,(New-Object Windows.Automation.PropertyCondition($A::ProcessIdProperty,[int]$p))) | ? { $_.Current.Name -like 'Example Domain*' }).Count"`).toString().trim();
 (async () => {
   const c = start('playwright-auth', 'probe');
   await c.init(60000);

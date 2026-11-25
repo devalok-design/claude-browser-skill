@@ -10,8 +10,8 @@
   never clicks a page button that happens to have the same name.
 
 .EXAMPLE
-  powershell -File chrome-ui.ps1 -Profile claude-browser -List
-  powershell -File chrome-ui.ps1 -Profile claude-browser -Window "permission.site" -Click Block
+  powershell -File chrome-ui.ps1 -Profile agent-profile -List
+  powershell -File chrome-ui.ps1 -Profile agent-profile -Window "permission.site" -Click Block
 #>
 param(
   [Parameter(Mandatory = $true)][string]$Profile,   # substring of the Chrome --user-data-dir to target
