@@ -70,6 +70,7 @@ count against the page's total.
 | Upload, iframe, shadow DOM, download | `references/uploads-frames.md` |
 | Timeouts, `networkidle` hangs, infinite or virtual lists | `references/waiting-lists.md` |
 | `did not connect within 30s` | Token mismatch, or Chrome isn't running (`references/setup.md`). |
+| A Chrome prompt under the URL bar (permission, password warning, infobar) the snapshot can't see | `references/chrome-prompts.md`: answer it with `tools/chrome-ui.ps1`. Never press `Cancel` on "started debugging this browser". |
 | Login, 2FA, CAPTCHA | Stop. Tell the user the account and page; they finish it in the browser; then snapshot and continue. Never ask for codes in chat. |
 | Permission classifier denied an action | Report it. Never route around it (e.g. `checked = true` on a consent box). |
 

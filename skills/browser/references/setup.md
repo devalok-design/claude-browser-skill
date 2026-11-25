@@ -54,11 +54,11 @@ A stdio JSON-RPC proxy in front of `@playwright/mcp --extension`:
    does the same when the session exits.
 4. If setup fails, the call goes through anyway in the old shared tab, and the error is written to stderr.
 
-Known limits: a minimised window is always hidden. **While the display is off or asleep, every window
-counts as hidden too.** Right after undocking a laptop, `check.js` passed only 2 of 8 runs; once the screen
-was in use again it passed 8 of 8 on the same single screen. The display being asleep is the likely cause
-of the failures, but we didn't capture it at the time. A window covered by another app stayed `visible`
-in our test. When a session starts, another session's page can blip
+Known limits: a minimised window is always hidden. **Don't drive the browser while the display is off.**
+With the display switched off, page calls stopped answering altogether: 3 sessions, no reply for over 60s,
+and back to normal once the screen woke. Separately, right after undocking a laptop, `check.js` passed only
+2 of 8 runs with pages reported `hidden`, then 8 of 8 on the same screen later. That cause wasn't captured.
+A window covered by another app (a maximised File Explorer, 15s) stayed `visible` at full speed. When a session starts, another session's page can blip
 to hidden for about a second. Beyond 8 concurrent sessions, windows reuse positions. `claude --chrome`
 (Claude in Chrome) uses per-session tab groups but one window, so the active-tab limit still applies there.
 

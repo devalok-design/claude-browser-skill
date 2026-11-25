@@ -31,6 +31,7 @@ We are sharing it because the problems were not ours alone.
 | `skills/browser/` | The skill: choosing the right tool, reading an app's own API from inside a logged-in page, and a table that maps each symptom to its fix. |
 | `skills/browser/references/` | Recipes mined from the transcripts: `forms.md` (dropdowns, fields, checkboxes, modals), `uploads-frames.md`, `waiting-lists.md`, and `setup.md`. |
 | `wrapper/own-window-proxy.js` | A stdio proxy for `@playwright/mcp --extension`. It gives each session its own window, staggered so no window covers another, and closes that window when the session is done. |
+| `tools/chrome-ui.ps1` | Lists and answers Chrome's own prompts under the URL bar (permissions, password warnings), which Playwright can't see, through Windows UI Automation. It refuses to press Cancel on the extension's debugging bar. |
 | `tests/` | `check.js` runs three sessions at once against your real setup and fails if any page is hidden or slow. Each probe answers one question. |
 
 ## Install
@@ -46,8 +47,8 @@ add a `skills/browser/references/local.md`. The skill reads it first, and `.giti
 ## Status
 
 Tested on Windows 11 with Chrome, `@playwright/mcp` 0.0.86 and Playwright extension 0.6.0, in November 2026.
-macOS and Linux have not been tried. Pages still stall in a minimised window, and very likely while the
-display is asleep (see `setup.md`). Every number in the skill comes from a measurement or from cases in those
+macOS and Linux have not been tried. Pages stall in a minimised window, and page calls stopped answering
+while the display was switched off (see `setup.md`). Every number in the skill comes from a measurement or from cases in those
 transcripts. Anything we have not tested is labelled as such.
 
 Issues and pull requests are welcome, especially results from other setups.
