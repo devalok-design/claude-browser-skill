@@ -46,8 +46,8 @@ add a `skills/browser/references/local.md`. The skill reads it first, and `.giti
 ## Status
 
 Tested on Windows 11 with Chrome, `@playwright/mcp` 0.0.86 and Playwright extension 0.6.0, in November 2026.
-macOS and Linux have not been tried. One limit we hit: a window fully covered by another app counts as
-hidden, so on a single laptop screen with a maximised editor in front, pages can still stall (see `setup.md`). Every number in the skill comes from a measurement or from cases in those
+macOS and Linux have not been tried. Pages still stall in a minimised window, and very likely while the
+display is asleep (see `setup.md`). Every number in the skill comes from a measurement or from cases in those
 transcripts. Anything we have not tested is labelled as such.
 
 Issues and pull requests are welcome, especially results from other setups.

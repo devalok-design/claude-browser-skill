@@ -54,10 +54,11 @@ A stdio JSON-RPC proxy in front of `@playwright/mcp --extension`:
    does the same when the session exits.
 4. If setup fails, the call goes through anyway in the old shared tab, and the error is written to stderr.
 
-Known limits: **a window fully covered by another app counts as hidden too.** Windows reports it as occluded
-and Chrome stops it. This happens easily on a single laptop screen with a maximised editor or terminal in
-front. In our tests, 3 sessions passed 10 out of 10 runs on a two-monitor desk, but only 2 out of 8 after
-undocking to the laptop screen alone. A minimised window is always hidden. When a session starts, another session's page can blip
+Known limits: a minimised window is always hidden. **While the display is off or asleep, every window
+counts as hidden too.** Right after undocking a laptop, `check.js` passed only 2 of 8 runs; once the screen
+was in use again it passed 8 of 8 on the same single screen. The display being asleep is the likely cause
+of the failures, but we didn't capture it at the time. A window covered by another app stayed `visible`
+in our test. When a session starts, another session's page can blip
 to hidden for about a second. Beyond 8 concurrent sessions, windows reuse positions. `claude --chrome`
 (Claude in Chrome) uses per-session tab groups but one window, so the active-tab limit still applies there.
 
