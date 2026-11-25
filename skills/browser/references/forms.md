@@ -57,9 +57,9 @@ ant-select: `locator('.ant-select-selector').dispatchEvent('mousedown')`, then p
 **Option never appears: the list never opened** (3 cases):
 
 ```js
-const cb = page.getByRole('combobox', { name: 'Credit limit Information' });
+const cb = page.getByRole('combobox', { name: 'Plan' });
 if (await cb.getAttribute('aria-expanded') !== 'true') { await cb.focus(); await page.keyboard.press('Enter'); }
-await page.getByRole('option', { name: '$50' }).click({ timeout: 5000 });
+await page.getByRole('option', { name: 'Pro' }).click({ timeout: 5000 });
 ```
 
 **Go around it** (1 case each): page with the next-page button instead of a stuck rows-per-page select;
@@ -101,7 +101,7 @@ field-listing recipe, open the state that reveals it, then `fill`. Cloudflare's 
 **Strict mode on fill** (`getByRole('spinbutton', { name: 'L' }) resolved to 3 elements`): accessible-name
 match is substring by default. Use `{ exact: true }` or a unique `#id`.
 
-**Disabled field** (2 cases): it's computed from another field. Fill the upstream field (e.g. a CIN), press
+**Disabled field** (2 cases): it's computed from another field. Fill the upstream field (e.g. a registration number), press
 `Tab` to trigger the lookup, then read the disabled one. Don't fight it.
 
 **Chip/tag inputs**: `fill()`, then `dispatchEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true })`.
@@ -109,7 +109,7 @@ match is substring by default. Use `{ exact: true }` or a unique `#id`.
 set `.value` and `form.submit()` in evaluate.
 
 Untested in the transcripts: Monaco/CodeMirror 6/ProseMirror/Lexical as fill targets, multi-box OTP inputs,
-masked inputs (a single-box OTP worked with `fill('001945')`).
+masked inputs (a single-box OTP worked with a plain `fill('123456')`).
 
 ## Checkboxes, radios, toggles
 
@@ -120,7 +120,7 @@ element and **read the state back**:
 ```js
 // browser_evaluate
 () => {
-  const r = [...document.querySelectorAll('input[type=radio]')].find(x => x.value === 'Innovative');
+  const r = [...document.querySelectorAll('input[type=radio]')].find(x => x.value === 'option-b');
   if (!r) return 'missing';
   if (!r.checked) (r.closest('label') || r).click();
   return r.checked;
@@ -139,12 +139,12 @@ around the classifier: never.**
 ## Modals, overlays, menus
 
 - **× close is an icon, not text** → `browser_press_key({ key: 'Escape' })` (4 cases).
-- **Two dialogs match** → `page.getByRole('dialog', { name: 'Add Agent' })`.
+- **Two dialogs match** → `page.getByRole('dialog', { name: 'Add member' })`.
 - **`browser_handle_dialog` only handles native `alert/confirm/prompt`.** An in-page `[role=dialog]` is
   ordinary DOM: `The tool "browser_handle_dialog" can only be used when there is related modal state present.`
 - **Something covers the target**: dismiss known interstitials first (Google Cloud billing "Do this later",
-  "Update Timezone", "Skip for now"). A sticky header was neutralised with
-  `page.addStyleTag({ content: '.header-new { pointer-events:none !important }' })`.
+  a portal's "update your settings" and "skip for now" prompts). A sticky header was neutralised with
+  `page.addStyleTag({ content: '.site-header { pointer-events:none !important }' })`.
 - **Text locator hits a hidden duplicate** (tooltip copies): `.filter({ visible: true }).first()`, scoped to `main`.
 - **Row "More options" menus** (Stripe API keys, 5 cases): reopen the trigger if the item isn't visible, then
   `item.click({ force: true })`.

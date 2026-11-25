@@ -48,7 +48,7 @@ const CANT_RUN = /did not connect|Extension disconnected|not connected|ECONNREFU
         const line = `${tag} s${i}: ${v ? JSON.stringify(v) : r.text.replace(/\s+/g, ' ').slice(0, 200)}`;
         console.log(line);
         if (!v) return fails.push(line);
-        if (!v.href.includes(`check=${i}&r=${tag}`)) fails.push(`${tag} s${i} sees another session's page: ${v.href} | navigate said: ${(nav[i].text || '').replace(/s+/g, ' ').slice(0, 160)}`);
+        if (!v.href.includes(`check=${i}&r=${tag}`)) fails.push(`${tag} s${i} sees another session's page: ${v.href} | navigate said: ${(nav[i].text || '').replace(/\s+/g, ' ').slice(0, 160)}`);
         if (v.vis !== 'visible') fails.push(`${tag} s${i} page is ${v.vis} (own-window setup not working?)`);
         if (v.raf < 30) fails.push(`${tag} s${i} rAF ${v.raf}/s (throttled)`);
         if (v.tmo < 15) fails.push(`${tag} s${i} timers ${v.tmo}/s (throttled)`);
